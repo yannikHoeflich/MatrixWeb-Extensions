@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using MatrixWeatherDisplay.Logging;
 using MatrixWeb.Extensions;
 using MatrixWeb.Extensions.Data;
 using MatrixWeb.Extensions.Services;
@@ -32,7 +31,7 @@ public partial class GasPriceService : IInitializable, IService {
     private double _price;
     private TicksTime _lastUpdate;
 
-    private readonly ILogger _logger = Logger.Create<GasPriceService>();
+    private readonly ILogger _logger;
 
     private MinMax[] _minMaxValues;
 
@@ -41,9 +40,10 @@ public partial class GasPriceService : IInitializable, IService {
 
     public bool IsEnabled { get; private set; }
 
-    public GasPriceService(ConfigService configService) {
+    public GasPriceService(ConfigService configService, ILogger logger) {
         _configService = configService;
         _minMaxValues = new MinMax[_daysToSave];
+        _logger = logger;
     }
 
     public void Init() {
