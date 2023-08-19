@@ -40,7 +40,7 @@ public partial class GasPriceService : IInitializable, IService {
 
     public bool IsEnabled { get; private set; }
 
-    public GasPriceService(ConfigService configService, ILogger logger) {
+    public GasPriceService(ConfigService configService, ILogger<GasPriceScreen> logger) {
         _configService = configService;
         _minMaxValues = new MinMax[_daysToSave];
         _logger = logger;
