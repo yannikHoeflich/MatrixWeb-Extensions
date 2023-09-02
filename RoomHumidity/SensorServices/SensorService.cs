@@ -18,21 +18,16 @@ public class SensorService : IService, IInitializable {
         _logger = logger;
     }
 
-    public async Task ScanAsync()
-    {
+    public async Task ScanAsync() {
         _logger.LogInformation("Searching for sensor devices");
-        while (_devices.Count == 0)
-        {
+        while (_devices.Count == 0) {
             _logger.LogDebug("Scanning . . .");
-            await foreach (IDevice device in Device.ScanAsync())
-            {
-                if (device is not SensorDevice sensorDevice)
-                {
+            await foreach (IDevice device in Device.ScanAsync()) {
+                if (device is not SensorDevice sensorDevice) {
                     continue;
                 }
 
-                if (_devices.Exists(x => x.Id == sensorDevice.Id))
-                {
+                if (_devices.Exists(x => x.Id == sensorDevice.Id)) {
                     continue;
                 }
 
@@ -46,25 +41,22 @@ public class SensorService : IService, IInitializable {
 
     public SensorDevice? GetDeviceBySuffix(string suffix) => _devices.Find(x => x.Suffix == suffix);
 
-    public async Task<double?> GetValueBySuffixAsync(string suffix)
-    {
+    public async Task<double?> GetValueBySuffixAsync(string suffix) {
         SensorDevice? device = GetDeviceBySuffix(suffix);
-        if (device is null)
-        {
+        if (device is null) {
             return null;
         }
 
-        try
-        {
+        try {
             return await device.GetValueAsync(TimeSpan.FromSeconds(1));
-        }
-        catch
-        {
+        } catch {
             _logger.LogWarning("Value request timed out");
             return null;
         }
     }
 
-    public void Init() => _ = ScanAsync();
-    InitResult IInitializable.Init() => throw new NotImplementedException();
+    public InitResult Init() {
+        _ = ScanAsync();
+        return InitResult.Success;
+    }
 }
