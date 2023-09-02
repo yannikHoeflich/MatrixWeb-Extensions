@@ -1,6 +1,7 @@
 ﻿using MatrixWeatherDisplay.Services;
 using MatrixWeb.Extensions;
 using MatrixWeb.Extensions.Data;
+using MatrixWeb.Extensions.Services.Translation;
 using MatrixWeb.Extensions.Weather.Data;
 using MatrixWeb.Extensions.Weather.Services;
 using RoomHumidity;
@@ -15,9 +16,12 @@ public class RoomHumidityScreen : IScreenGenerator {
     private readonly WeatherService _weatherService;
     private readonly ColorHelper _colorHelper;
 
-    public string Name { get; } = "Raum Luftfeuchtigkeit";
+    public Text Name { get; } = new Text(new TextElement(LanguageCode.EN, "Raum Humidity"), new TextElement(LanguageCode.DE, "Raum Luftfeuchtigkeit"));
 
-    public string Description { get; } = "Zeigt die aktuelle Luftfeuchtigkeit im Raum an";
+    public Text Description { get; } = new Text(
+                                        new TextElement(LanguageCode.EN, "Shows the current air humidity in your room."),
+                                        new TextElement(LanguageCode.DE, "Zeigt die aktuelle Luftfeuchtigkeit im Raum an.")
+                                       );
 
     public TimeSpan ScreenTime { get; set; } = TimeSpan.FromSeconds(1);
 

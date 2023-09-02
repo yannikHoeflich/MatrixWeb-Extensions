@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MatrixWeb.Extensions" Version="1.0.3" />
-    <PackageReference Include="MatrixWeb.Extensions.Weather" Version="1.0.3" />
+    <PackageReference Include="MatrixWeb.Extensions" Version="1.1.0" />
+    <PackageReference Include="MatrixWeb.Extensions.Weather" Version="1.1.0" />
     <PackageReference Include="USM" Version="1.0.0" />
   </ItemGroup>
 

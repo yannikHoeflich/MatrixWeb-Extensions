@@ -1,15 +1,18 @@
 ﻿using MatrixWeb.Extensions;
+using MatrixWeb.Extensions.Data.Config;
 using MatrixWeb.Extensions.Services;
 using Microsoft.Extensions.Logging;
 using USM.Devices;
 
 namespace RoomHumidty.SensorServices;
-public class SensorService: IService, IInitializable {
+public class SensorService : IService, IInitializable {
     private readonly List<SensorDevice> _devices = new();
 
     private readonly ILogger _logger;
 
     public bool IsEnabled => _devices.Count > 0;
+
+    public ConfigLayout ConfigLayout { get; } = ConfigLayout.Empty;
 
     public SensorService(ILogger<SensorService> logger) {
         _logger = logger;
@@ -63,4 +66,5 @@ public class SensorService: IService, IInitializable {
     }
 
     public void Init() => _ = ScanAsync();
+    InitResult IInitializable.Init() => throw new NotImplementedException();
 }

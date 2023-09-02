@@ -1,6 +1,7 @@
 ﻿using MatrixWeatherDisplay.Services;
 using MatrixWeb.Extensions;
 using MatrixWeb.Extensions.Data;
+using MatrixWeb.Extensions.Services.Translation;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -9,9 +10,12 @@ public class GasPriceScreen : IScreenGenerator {
     private readonly GasPriceService _gasPrices;
     private readonly SymbolLoader _symbolLoader;
 
-    public string Name { get; } = "Benzin Preis";
+    public Text Name { get; } = new Text(new TextElement(LanguageCode.EN, "Gas price"), new TextElement(LanguageCode.DE, "Benzin Preis"));
 
-    public string Description { get; } = "Zeigt den günstigsten Benzin preis im Umkreis an";
+    public Text Description { get; } = new Text(
+                                        new TextElement(LanguageCode.EN, "Shows the lowest gas price in your area."),
+                                        new TextElement(LanguageCode.DE, "Zeigt den günstigsten Benzin preis im Umkreis an.")
+                                    );
 
     public TimeSpan ScreenTime { get; set; } = TimeSpan.FromSeconds(3);
 

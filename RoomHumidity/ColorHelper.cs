@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using MatrixWeb.Extensions;
 using MatrixWeb.Extensions.Data;
+using MatrixWeb.Extensions.Data.Config;
 using MatrixWeb.Extensions.Services;
 using SixLabors.ImageSharp;
 using System;
@@ -19,14 +20,21 @@ public class ColorHelper : IService, IInitializable {
 
     public bool IsEnabled { get; } = true;
 
+    public ConfigLayout ConfigLayout { get; } = new ConfigLayout() { 
+        ConfigName = s_configName,
+        Keys = new ConfigKey[] {
+            new(s_badHumidityDifferenceName, typeof(double))
+        }
+    };
+
     public ColorHelper(ConfigService configService) {
         _configService = configService;
     }
 
-    public void Init() {
-        Config? config = _configService.GetConfig(s_configName);
+    public InitResult Init() {
+        RawConfig? config = _configService.GetConfig(s_configName);
         if (config is null) {
-            return;
+            return InitResult.NoConfig();
         }
 
         if (config.TryGetDouble(s_badHumidityDifferenceName, out double badHumidityDifference)) {
@@ -34,6 +42,7 @@ public class ColorHelper : IService, IInitializable {
         } else {
             config.Set(s_badHumidityDifferenceName, _badHumidityDifference);
         }
+        return InitResult.Success;
     }
 
     public Color MapRoomHumidity(double roomHumidity, double outsideHumidity) {

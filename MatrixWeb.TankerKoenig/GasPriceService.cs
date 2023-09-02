@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using MatrixWeb.Extensions;
 using MatrixWeb.Extensions.Data;
+using MatrixWeb.Extensions.Data.Config;
 using MatrixWeb.Extensions.Services;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,8 +16,10 @@ using Tankerkoenig.Net.Results;
 
 namespace MatrixWeb.TankerKoenig;
 public partial class GasPriceService : IInitializable, IService {
+    private const string s_configName = "tanker-koenig";
     private const string s_searchRadiusName = "search-radius";
     private const string s_defaultDaysToSaveName = "days-to-save";
+    private const string s_apiKeyName = "api-key";
 
     private const int s_defaultDaysToSave = 14;
 
@@ -40,18 +43,32 @@ public partial class GasPriceService : IInitializable, IService {
 
     public bool IsEnabled { get; private set; }
 
+    public ConfigLayout ConfigLayout { get; } = new ConfigLayout() { 
+        ConfigName = s_configName,
+        Keys = new ConfigKey[] {
+            new(s_apiKeyName, typeof(string)),
+            new(s_defaultDaysToSaveName, typeof(int)),
+            new(s_searchRadiusName, typeof(int))
+        }
+    };
+
     public GasPriceService(ConfigService configService, ILogger<GasPriceScreen> logger) {
         _configService = configService;
         _minMaxValues = new MinMax[_daysToSave];
         _logger = logger;
     }
 
-    public void Init() {
-        Config? config = _configService.GetConfig("tanker-koenig");
+    public InitResult Init() {
+        RawConfig? config = _configService.GetConfig(s_configName);
 
-        if (config is null || !config.TryGetString("api-key", out string? apiKey) || apiKey is null) {
+        if (config is null) {
             IsEnabled = false;
-            return;
+            return InitResult.NoConfig();
+        }
+
+        if(!config.TryGetString(s_apiKeyName, out string? apiKey) || apiKey is null) {
+            IsEnabled = false;
+            return InitResult.NoConfigElements(s_apiKeyName);
         }
 
         if (config.TryGetInt(s_defaultDaysToSaveName, out int daysToSave)) {
@@ -69,6 +86,7 @@ public partial class GasPriceService : IInitializable, IService {
 
         _client = new TankerkoenigClient(apiKey);
         IsEnabled = true;
+        return InitResult.Success;
     }
 
     private async Task UpdatePriceAsync(double lat, double lon) {
